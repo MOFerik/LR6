@@ -16,7 +16,6 @@ namespace LR4
         {
             InitializeComponent();
             this.panel1.BackColor = System.Drawing.Color.White;
-            this.KeyDown += new KeyEventHandler(Form1_KeyDown);
         }
 
         public class CCircle // Класс кругов
@@ -25,12 +24,26 @@ namespace LR4
             public int y;
             public int r = 60;
             public bool flag;
+            public int figure;
+            public int lineX1;
+            public int lineX2;
+            public int lineY1;
+            public int lineY2;
         }
 
         public class CircleStorage // Класс-хранилище кругов
         {
+            double div(double a, double b)
+            {
+                if (b != 0)
+                    return a / b;
+                else
+                    return 0;
+            }
             public CCircle[] arr = new CCircle[1000];
             public int i = 0;
+
+            public int readyLine = -1;
 
             public bool ctrlPress = false;
 
@@ -40,16 +53,53 @@ namespace LR4
                 select = false;
                 for (int j = 0; j < this.i; j++)
                 {
-                    if (this.arr[j] != null && x > this.arr[j].x - 30 && x < this.arr[j].x + 30 && y > this.arr[j].y - 30 && y < this.arr[j].y + 30)
+                    if (this.arr[j] != null && this.arr[j].figure != 3)
                     {
-                        if (ModifierKeys.HasFlag(Keys.Control) != true) // Если контрол не нажат
-                            for (int k = 0; k < this.i; k++) // Снятие выделения с остальных объектов
-                            {
-                                if (this.arr[k] != null && !(x > this.arr[k].x - 30 && x < this.arr[k].x + 30 && y > this.arr[k].y - 30 && y < this.arr[k].y + 30))
-                                    this.arr[k].flag = false;
-                            }
-                        this.arr[j].flag = true; // Выделение указанного объекта
-                        select = true;
+                        if (this.arr[j] != null && x > this.arr[j].x - this.arr[j].r / 2 && x < this.arr[j].x + this.arr[j].r / 2 && y > this.arr[j].y - this.arr[j].r / 2 && y < this.arr[j].y + this.arr[j].r / 2 )
+                        {
+                            if (ModifierKeys.HasFlag(Keys.Control) != true) // Если контрол не нажат
+                                for (int k = 0; k < this.i; k++) // Снятие выделения с остальных объектов
+                                {
+                                    if (this.arr[k] != null && this.arr[k].figure != 3)
+                                    {
+                                        if (this.arr[k] != null && !(x > this.arr[k].x - this.arr[k].r / 2 && x < this.arr[k].x + this.arr[k].r / 2 && y > this.arr[k].y - this.arr[k].r / 2 && y < this.arr[k].y + this.arr[k].r / 2))
+                                            this.arr[k].flag = false;
+                                    }
+                                    else
+                                    {
+                                        if (this.arr[k] != null && !(!(x > this.arr[k].lineX1 && x > this.arr[k].lineX2) && !(y > this.arr[k].lineY1 && y > this.arr[k].lineY2) && !(x < this.arr[k].lineX1 && x < this.arr[k].lineX2) && !(y < this.arr[k].lineY1 && y < this.arr[k].lineY2) && div((x - this.arr[k].lineX1), (y - this.arr[k].lineY1)) == div((this.arr[k].lineX2 - this.arr[k].lineX1), (this.arr[k].lineY2 - this.arr[k].lineY1))))
+                                        {
+                                            this.arr[k].flag = false;
+                                        }
+                                    }
+                                }
+                            this.arr[j].flag = true; // Выделение указанного объекта
+                            select = true;
+                        }
+                    }
+                    else
+                    {
+                        if (this.arr[j] != null && !(x > this.arr[j].lineX1 && x > this.arr[j].lineX2) && !(y > this.arr[j].lineY1 && y > this.arr[j].lineY2) && !(x < this.arr[j].lineX1 && x < this.arr[j].lineX2) && !(y < this.arr[j].lineY1 && y < this.arr[j].lineY2) && div((x - this.arr[j].lineX1),(y - this.arr[j].lineY1)) == div((this.arr[j].lineX2 - this.arr[j].lineX1), (this.arr[j].lineY2 - this.arr[j].lineY1)))
+                        {
+                            if (ModifierKeys.HasFlag(Keys.Control) != true) // Если контрол не нажат
+                                for (int k = 0; k < this.i; k++) // Снятие выделения с остальных объектов
+                                {
+                                    if (this.arr[k] != null && this.arr[k].figure != 3)
+                                    {
+                                        if (this.arr[k] != null && !(x > this.arr[k].x - this.arr[k].r / 2 && x < this.arr[k].x + this.arr[k].r / 2 && y > this.arr[k].y - this.arr[k].r / 2 && y < this.arr[k].y + this.arr[k].r / 2))
+                                            this.arr[k].flag = false;
+                                    }
+                                    else
+                                    {
+                                        if (this.arr[k] != null && !(!(x > this.arr[k].lineX1 && x > this.arr[k].lineX2) && !(y > this.arr[k].lineY1 && y > this.arr[k].lineY2) && !(x < this.arr[k].lineX1 && x < this.arr[k].lineX2) && !(y < this.arr[k].lineY1 && y < this.arr[k].lineY2) && div((x - this.arr[k].lineX1), (y - this.arr[k].lineY1)) == div((this.arr[k].lineX2 - this.arr[k].lineX1), (this.arr[k].lineY2 - this.arr[k].lineY1))))
+                                        {
+                                            this.arr[k].flag = false;
+                                        }
+                                    }
+                                }
+                            this.arr[j].flag = true; // Выделение указанного объекта
+                            select = true;
+                        }
                     }
                 }
                 return select;
@@ -81,13 +131,55 @@ namespace LR4
                     {
                         if (stor.arr[j].flag)
                         {
-                            Rectangle rect = new Rectangle(stor.arr[j].x - 30, stor.arr[j].y - 30, 60, 60);
-                            panel1.CreateGraphics().DrawEllipse(aPen, rect);
+                            Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y - stor.arr[j].r / 2, stor.arr[j].r, stor.arr[j].r);
+                            Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                            switch (stor.arr[j].figure)
+                            {
+                                case 0:
+                                    this.panel1.CreateGraphics().DrawEllipse(aPen, rect);
+                                    break;
+                                case 1:
+                                    this.panel1.CreateGraphics().DrawRectangle(aPen, rect);
+                                    break;
+                                case 2:
+                                    this.panel1.CreateGraphics().DrawPolygon(aPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                                    break;
+                                case 3:
+                                    if (stor.readyLine >= 0)
+                                        panel1.CreateGraphics().FillEllipse(Brushes.Red, dot);
+                                    else
+                                        this.panel1.CreateGraphics().DrawLine(aPen, stor.arr[j].lineX1, stor.arr[j].lineY1, stor.arr[j].lineX2, stor.arr[j].lineY2);
+                                    break;
+                                case 4:
+                                    panel1.CreateGraphics().FillEllipse(Brushes.Red, dot);
+                                    break;
+                            }
                         }
                         else
                         {
-                            Rectangle rect = new Rectangle(stor.arr[j].x - 30, stor.arr[j].y - 30, 60, 60);
-                            panel1.CreateGraphics().DrawEllipse(mPen, rect);
+                            Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y - stor.arr[j].r / 2, stor.arr[j].r, stor.arr[j].r);
+                            Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                            switch (stor.arr[j].figure)
+                            {
+                                case 0:
+                                    this.panel1.CreateGraphics().DrawEllipse(mPen, rect);
+                                    break;
+                                case 1:
+                                    this.panel1.CreateGraphics().DrawRectangle(mPen, rect);
+                                    break;
+                                case 2:
+                                    this.panel1.CreateGraphics().DrawPolygon(mPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                                    break;
+                                case 3:
+                                    if (stor.readyLine >= 0)
+                                        panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                                    else
+                                        this.panel1.CreateGraphics().DrawLine(mPen, stor.arr[j].lineX1, stor.arr[j].lineY1, stor.arr[j].lineX2, stor.arr[j].lineY2);
+                                    break;
+                                case 4:
+                                    panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -97,43 +189,159 @@ namespace LR4
                 CCircle circ = new CCircle(); // Создание нового объекта
                 circ.x = e.X;
                 circ.y = e.Y;
+                circ.r = Convert.ToInt32(numericUpDown1.Value);
                 stor.AddStor(circ);
-                for (int j = 0; j < stor.i; j++)
+                if (listBox1.SelectedIndex == 3 && stor.readyLine >= 0)
                 {
-                    if (stor.arr[j] != null)
+                    stor.arr[stor.i - 1].figure = 3;
+                    Pen wPen = new Pen(Color.White, 3);
+                    Rectangle dot = new Rectangle(stor.arr[stor.readyLine].x, stor.arr[stor.readyLine].y, 2, 2);
+                    panel1.CreateGraphics().FillEllipse(Brushes.White, dot);
+                    this.panel1.CreateGraphics().DrawLine(aPen, circ.x, circ.y, stor.arr[stor.readyLine].x, stor.arr[stor.readyLine].y);
+                    stor.arr[stor.i - 1].lineX1 = stor.arr[stor.i - 1].x;
+                    stor.arr[stor.i - 1].lineY1 = stor.arr[stor.i - 1].y;
+                    stor.arr[stor.i - 1].lineX2 = stor.arr[stor.readyLine].x;
+                    stor.arr[stor.i - 1].lineY2 = stor.arr[stor.readyLine].y;
+
+                    stor.readyLine = -1;
+                }
+                else
+                {
+                    for (int j = 0; j < stor.i; j++)
                     {
-                        if (j != (stor.i - 1)) // Снятие выделения с других объектов и отрисовка их
+                        if (stor.arr[j] != null)
                         {
-                            stor.arr[j].flag = false;
-                            Rectangle rect = new Rectangle(stor.arr[j].x - 30, stor.arr[j].y - 30, 60, 60);
-                            panel1.CreateGraphics().DrawEllipse(mPen, rect);
-                        }
-                        else // Выделение нового объекта и его отрисовка
-                        {
-                            stor.arr[j].flag = true;
-                            Rectangle rect = new Rectangle(stor.arr[j].x - 30, stor.arr[j].y - 30, 60, 60);
-                            panel1.CreateGraphics().DrawEllipse(aPen, rect);
+                            if (j != (stor.i - 1)) // Снятие выделения с других объектов и отрисовка их
+                            {
+                                stor.arr[j].flag = false;
+                                Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y - stor.arr[j].r / 2, stor.arr[j].r, stor.arr[j].r);
+                                Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                                switch (stor.arr[j].figure)
+                                {
+                                    case 0:
+                                        this.panel1.CreateGraphics().DrawEllipse(mPen, rect);
+                                        break;
+                                    case 1:
+                                        this.panel1.CreateGraphics().DrawRectangle(mPen, rect);
+                                        break;
+                                    case 2:
+                                        this.panel1.CreateGraphics().DrawPolygon(mPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                                        break;
+                                    case 3:
+                                        if (stor.readyLine >= 0)
+                                            panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                                        else
+                                            this.panel1.CreateGraphics().DrawLine(mPen, stor.arr[j].lineX1, stor.arr[j].lineY1, stor.arr[j].lineX2, stor.arr[j].lineY2);
+                                        break;
+                                    case 4:
+                                        panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                                        break;
+                                }
+                            }
+                            else // Выделение нового объекта и его отрисовка
+                            {
+                                stor.arr[j].flag = true;
+                                Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y - stor.arr[j].r / 2, stor.arr[j].r, stor.arr[j].r);
+                                Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                                switch (listBox1.SelectedIndex)
+                                {
+                                    case 0:
+                                        this.panel1.CreateGraphics().DrawEllipse(aPen, rect);
+                                        circ.figure = 0;
+                                        break;
+                                    case 1:
+                                        this.panel1.CreateGraphics().DrawRectangle(aPen, rect);
+                                        circ.figure = 1;
+                                        break;
+                                    case 2:
+                                        this.panel1.CreateGraphics().DrawPolygon(aPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                                        circ.figure = 2;
+                                        break;
+                                    case 3:
+                                        panel1.CreateGraphics().FillEllipse(Brushes.Red, dot);
+                                        stor.readyLine = j;
+                                        stor.arr[j].r = 6;
+                                        circ.figure = 3;
+                                        break;
+                                    case 4:
+                                        panel1.CreateGraphics().FillEllipse(Brushes.Red, dot);
+                                        circ.figure = 4;
+                                        stor.arr[j].r = 6;
+                                        break;
+                                    default:
+                                        this.panel1.CreateGraphics().DrawEllipse(aPen, rect);
+                                        circ.figure = 0;
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        void Form1_KeyDown(object sender, KeyEventArgs e) // Удаление выделенных объектов при нажатии на Delete
+        private void Button1_Click(object sender, EventArgs e)
         {
-            if (e.KeyData == Keys.Delete)
+            for (int j = 0; j < stor.i; j++)
             {
-                for (int j = 0; j < stor.i; j++)
+                if (stor.arr[j] != null)
                 {
-                    if (stor.arr[j] != null)
+                    if (stor.arr[j].flag == true)
                     {
-                        if (stor.arr[j].flag == true)
+                        Pen wPen = new Pen(Color.White, 3);
+                        Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y - stor.arr[j].r / 2, stor.arr[j].r, stor.arr[j].r);
+                        Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                        switch (stor.arr[j].figure)
                         {
-                            Pen wPen = new Pen(Color.White, 3);
-                            Rectangle rect = new Rectangle(stor.arr[j].x - 30, stor.arr[j].y - 30, 60, 60);
-                            this.panel1.CreateGraphics().DrawEllipse(wPen, rect);
-                            stor.arr[j] = null;
+                            case 0:
+                                this.panel1.CreateGraphics().DrawEllipse(wPen, rect);
+                                break;
+                            case 1:
+                                this.panel1.CreateGraphics().DrawRectangle(wPen, rect);
+                                break;
+                            case 2:
+                                this.panel1.CreateGraphics().DrawPolygon(wPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                                break;
+                            case 3:
+                                if (stor.readyLine >= 0)
+                                    panel1.CreateGraphics().FillEllipse(Brushes.White, dot);
+                                else
+                                    this.panel1.CreateGraphics().DrawLine(wPen, stor.arr[j].lineX1, stor.arr[j].lineY1, stor.arr[j].lineX2, stor.arr[j].lineY2);
+                                break;
+                            case 4:
+                                panel1.CreateGraphics().FillEllipse(Brushes.White, dot);
+                                break;
                         }
+                        stor.arr[j] = null;
+                    }
+                }
+            }
+            for (int j = 0; j < stor.i; j++)
+            {
+                if (stor.arr[j] != null)
+                {
+                    Rectangle rect = new Rectangle(stor.arr[j].x - stor.arr[j].r/2, stor.arr[j].y - stor.arr[j].r/2, stor.arr[j].r, stor.arr[j].r);
+                    Rectangle dot = new Rectangle(stor.arr[j].x, stor.arr[j].y, 2, 2);
+                    switch (stor.arr[j].figure)
+                    {
+                        case 0:
+                            this.panel1.CreateGraphics().DrawEllipse(mPen, rect);
+                            break;
+                        case 1:
+                            this.panel1.CreateGraphics().DrawRectangle(mPen, rect);
+                            break;
+                        case 2:
+                            this.panel1.CreateGraphics().DrawPolygon(mPen, new PointF[] { new PointF(stor.arr[j].x - stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x + stor.arr[j].r / 2, stor.arr[j].y + stor.arr[j].r / 2), new PointF(stor.arr[j].x, stor.arr[j].y - stor.arr[j].r / 2) });
+                            break;
+                        case 3:
+                            if (stor.readyLine >= 0)
+                                panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                            else
+                                this.panel1.CreateGraphics().DrawLine(mPen, stor.arr[j].lineX1, stor.arr[j].lineY1, stor.arr[j].lineX2, stor.arr[j].lineY2);
+                            break;
+                        case 4:
+                            panel1.CreateGraphics().FillEllipse(Brushes.Black, dot);
+                            break;
                     }
                 }
             }
