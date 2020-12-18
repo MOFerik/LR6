@@ -18,7 +18,7 @@ namespace LR4
             this.panel1.BackColor = System.Drawing.Color.White;
         }
 
-        public class CCircle // Класс кругов
+        public class CCircle // Класс фигур
         {
             public int x;
             public int y;
@@ -32,7 +32,7 @@ namespace LR4
             public Color clr = Color.Black;
         }
 
-        public class CircleStorage // Класс-хранилище кругов
+        public class CircleStorage // Класс-хранилище фигур
         {
             int div(int a, int b)
             {
